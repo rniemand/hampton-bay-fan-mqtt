@@ -132,14 +132,35 @@ void postStateUpdate(int id) {
   // Publish "Fan Power" state
   sprintf(outTopic, "%s/%s/on/state", BASE_TOPIC, idStrings[id]);
   client.publish(outTopic, fans[id].fanState ? "on":"off", true);
+  #if MQTT_LOG_MESSAGES
+    Serial.print("(MQTT) OUT [");
+    Serial.print(outTopic);
+    Serial.print("] ");
+    Serial.print(fans[id].fanState ? "on":"off");
+    Serial.println();
+  #endif
   
   // Publish "Fan Speed" state
   sprintf(outTopic, "%s/%s/speed/state", BASE_TOPIC, idStrings[id]);
   client.publish(outTopic, fanStateTable[fans[id].fanSpeed], true);
+  #if MQTT_LOG_MESSAGES
+    Serial.print("(MQTT) OUT [");
+    Serial.print(outTopic);
+    Serial.print("] ");
+    Serial.print(fanStateTable[fans[id].fanSpeed]);
+    Serial.println();
+  #endif
   
   // Publish "Fan Light" state
   sprintf(outTopic, "%s/%s/light/state", BASE_TOPIC, idStrings[id]);
   client.publish(outTopic, fans[id].lightState ? "on":"off", true);
+  #if MQTT_LOG_MESSAGES
+    Serial.print("(MQTT) OUT [");
+    Serial.print(outTopic);
+    Serial.print("] ");
+    Serial.print(fans[id].lightState ? "on":"off");
+    Serial.println();
+  #endif
 }
 
 void reconnect() {
