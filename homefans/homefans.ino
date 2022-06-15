@@ -77,7 +77,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     for(int i=0; payloadChar[i]; i++) { payloadChar[i] = tolower(payloadChar[i]); }
 
     // Sync tracked fan states based on the incomming MQTT message
-    if(strcmp(attr, "on") == 0) { // Fan Running State (On/Off)
+    if(strcmp(attr, "on") == 0) { // Fan Power State (On/Off)
       if(strcmp(payloadChar, "on") == 0) {
         fans[idint].fanState = true;
       } else if(strcmp(payloadChar, "off") == 0) {
@@ -113,10 +113,16 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 void postStateUpdate(int id) {
   char outTopic[100];
+  
+  // Publish "Fan Power" state
   sprintf(outTopic, "%s/%s/on/state", BASE_TOPIC, idStrings[id]);
   client.publish(outTopic, fans[id].fanState ? "on":"off", true);
+  
+  // Publish "Fan Speed" state
   sprintf(outTopic, "%s/%s/speed/state", BASE_TOPIC, idStrings[id]);
   client.publish(outTopic, fanStateTable[fans[id].fanSpeed], true);
+  
+  // Publish "Fan Light" state
   sprintf(outTopic, "%s/%s/light/state", BASE_TOPIC, idStrings[id]);
   client.publish(outTopic, fans[id].lightState ? "on":"off", true);
 }
