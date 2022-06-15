@@ -31,7 +31,26 @@ void transmitState(int fanId, char* attr, char* payload) {
   // mySwitch.setPulseLength(320);        // modify this if required
   
   // Generate and send the RF payload to the fan
-  mySwitch.send(generateCommand(fanId, attr, payload), 24);
+  int rfCommand = generateCommand(fanId, attr, payload);
+  mySwitch.send(rfCommand, 24);
+  
+  #if LOG_OUTGOING_COMMANDS
+    Serial.print("(RF) OUT [protocol: ");
+    Serial.print(RF_PROTOCOL);
+    Serial.print("] [repeats: ");
+    Serial.print(RF_REPEATS);
+    Serial.print("] [frequency: ");
+    Serial.print(RF_FREQUENCY);
+    Serial.print("] [fan: ");
+    Serial.print(fanId);
+    Serial.print("] [attr: ");
+    Serial.print(attr);
+    Serial.print("] [payload: ");
+    Serial.print(payload);
+    Serial.print("] ");
+    Serial.print(rfCommand);
+    Serial.println();
+  #endif
   
   ELECHOUSE_cc1101.SetRx();               // set Receive on
   mySwitch.disableTransmit();             // set Transmit off
@@ -42,7 +61,7 @@ void transmitState(int fanId, char* attr, char* payload) {
 
 void callback(char* topic, byte* payload, unsigned int length) {
   #if MQTT_LOG_MESSAGES
-    Serial.print("Message arrived [");
+    Serial.print("(MQTT) IN [");
     Serial.print(topic);
     Serial.print("] ");
     for (int i = 0; i < length; i++) {
@@ -70,17 +89,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     for(int i=0; payloadChar[i]; i++) {
       payloadChar[i] = tolower(payloadChar[i]);
     }
-
-    #if MQTT_LOG_MESSAGES
-      Serial.print("  > attr: ");
-      Serial.print(attr);
-      Serial.print(" | action: ");
-      Serial.print(action);
-      Serial.print(" | payload: ");
-      Serial.print(payloadChar);
-      Serial.println();
-    #endif
-
+    
     // Sync tracked fan states based on the incomming MQTT message
     if(strcmp(attr, "on") == 0) { // Fan Power State (On/Off)
       if(strcmp(payloadChar, "on") == 0) {
