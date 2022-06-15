@@ -85,6 +85,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
         fans[idint].fanSpeed = FAN_HI;
       } else if(strcmp(payloadChar, "off") == 0) {
         fans[idint].fanSpeed = 0;
+        fans[idint].fanState = false;
       }
     } else if(strcmp(attr, "light") == 0) { // Fan Light State (On/Off)
       if(strcmp(payloadChar, "on") == 0) {
@@ -213,9 +214,7 @@ void setup() {
 
 void loop() {
   // Ensure that the MQTT client is connected
-  if (!client.connected()) {
-    reconnect();
-  }
+  if (!client.connected()) { reconnect(); }
   client.loop();
   
   // Handle received rf-transmissions
@@ -268,7 +267,6 @@ void loop() {
           } else if(command == 13) { // All Off
             fans[id].lightState = false;
             fans[id].fanState = false;
-            fans[id].fanSpeed = 0;
           } else if(command == 14) { // On From Off
             fans[id].fanState = true;
           }
@@ -283,3 +281,5 @@ void loop() {
     mySwitch.resetAvailable();
   }
 }
+
+// Fin.
