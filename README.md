@@ -72,6 +72,7 @@ mqtt:
 ```
 
 ![](/images/01.png)
+_Loaded entities_
 
 ![](/images/02.png)
 
