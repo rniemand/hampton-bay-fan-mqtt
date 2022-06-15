@@ -1,12 +1,6 @@
 #include "homefans.h"
 
 /*
- * Original source code: https://github.com/owenb321/hampton-bay-fan-mqtt
- * Original author     : Ben Owen (https://github.com/owenb321)
- * Modification by     : Richard Niemand (https://github.com/rniemand) https://www.richardn.ca/
- * Project information : Modified to work with the "TX028C-S" remote controlled fans bridging them
- *                       to MQTT via "PubSubClient" - comms handled by "RCSwitch".
- *
  * Modifications       : General code cleanup & seperation
  *                     : Modified to work with Home Decorations #1001 415 438 fans
  *
