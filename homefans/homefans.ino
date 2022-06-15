@@ -219,51 +219,68 @@ void setup() {
 }
 
 void loop() {
-  if (!client.connected()) { reconnect(); }
+  // Ensure that the MQTT client is connected
+  if (!client.connected()) {
+    reconnect();
+  }
   client.loop();
-
-  // Handle received transmissions
+  
+  // Handle received rf-transmissions
   if (mySwitch.available()) {
-    value            =  mySwitch.getReceivedValue();       // save received Value
-    prot             = mySwitch.getReceivedProtocol();     // save received Protocol
-    bits             = mySwitch.getReceivedBitlength();    // save received Bitlength
-    int subResult    = value - 0b111111000110000000000000;
-    int shift8_1     = subResult >> 8;
-    int id           = shift8_1 ^0b1111;
+    value               = mySwitch.getReceivedValue();        // int value of rf command
+    prot                = mySwitch.getReceivedProtocol();     // transmission protocol used (expect 11)
+    bits                = mySwitch.getReceivedBitlength();    // transmission bit length (expect 24)
+    int subtractedValue = value - 0b111111000110000000000000; // zero out the common "1111  1100  0110" from the command
+    int truncatedValue  = subtractedValue >> 8;               // shift out the subtracted values (4 bits remaining)
+    int id              = truncatedValue ^0b1111;             // invert "truncatedValue" to get remote ID (0-15)
 
+    // Ensure that the protocol and bit-length are what we expect to see
     if( prot == 11 && bits == 24 ) {
-      int intMode = ((subResult & 0b000011110000) >> 4) % 6; // 1=Normal | 0=Light command
-      int command = subResult & 0b000000001111;
-      
+      // Remove the first and last 4 bits to get the "cmdMode" which is either:
+      //  (7) Normal Commands (On / Off / Speed / Light)
+      //  (6) Light Temperature Commands - not covered at the moment
+      // Use a modulus (% 6) to convert it to a 1 or 0 to use as a bool when required
+      int cmdMode = ((subtractedValue & 0b000011110000) >> 4) % 6;
+
+      // Strip the first 8 bits from the "subtractedValue" above to be left with the command
+      //  - 1110 (14) On from OFF        | WHEN: cmdMode: 1
+      //  - 0110 (6)  Fan Speed 1        | WHEN: cmdMode: 1 - DONE
+      //  - 0101 (5)  Fan speed 2        | WHEN: cmdMode: 1 - DONE
+      //  - 0100 (4)  Fan Speed 3        | WHEN: cmdMode: 1 - DONE
+      //  - 0001 (1)  Light Off          | WHEN: cmdMode: 1 - DONE
+      //  - 0010 (2)  Light On           | WHEN: cmdMode: 1 - DONE
+      //  - 1101 (13) Change Light Mode  | WHEN: cmdMode: 0 - (TODO) Need to add support in the future
+      //  - 1101 (13) All Off            | WHEN: cmdMode: 1 - DONE
+      //  - 0111 (7)  Fan Speed Off      | WHEN: cmdMode: 1 - DONE
+      int command = subtractedValue & 0b000000001111;
+
+      // Ensure that the command if for one of our remote IDs (0-15)
       if(id < 16) {
-        if(intMode == 1) {
+        if(cmdMode == 1) {
           if(command == 7) { // Fan OFF
             fans[id].fanState = false;
-            fans[id].fanSpeed = 0;
-          }
-          if(command == 6) { // Fan Speed 1
+          } else if(command == 6) { // Fan Speed 1
             fans[id].fanState = true;
             fans[id].fanSpeed = FAN_LOW;
-          }
-          if(command == 5) { // Fan Speed 2
+          } else if(command == 5) { // Fan Speed 2
             fans[id].fanState = true;
             fans[id].fanSpeed = FAN_MED;
-          }
-          if(command == 4) { // Fan Speed 3
+          } else if(command == 4) { // Fan Speed 3
             fans[id].fanState = true;
             fans[id].fanSpeed = FAN_HI;
-          }
-          if(command == 1) { // Light OFF
+          } else if(command == 1) { // Light OFF
             fans[id].lightState = false;
-          }
-          if(command == 2) { // Light ON
+          } else if(command == 2) { // Light ON
             fans[id].lightState = true;
-          }
-          if(command == 13) { // All Off
+          } else if(command == 13) { // All Off
             fans[id].lightState = false;
             fans[id].fanState = false;
             fans[id].fanSpeed = 0;
+          } else if(command == 14) { // On From Off
+            fans[id].fanState = true;
           }
+        } else if(cmdMode == 0) {
+          // Need to add handling logic here
         }
         
         postStateUpdate(id);
