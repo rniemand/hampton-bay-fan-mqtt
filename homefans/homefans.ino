@@ -200,19 +200,19 @@ int generateCommand(int fanId, char* attr, char* payload) {
 
 void setup() {
   Serial.begin(9600);
-
+  
   // initialize fan struct
   for(int i=0; i<16; i++) {
     fans[i].lightState = false;
     fans[i].fanState = false;
     fans[i].fanSpeed = 0;
   }
-
+  
   ELECHOUSE_cc1101.Init();
   ELECHOUSE_cc1101.setMHZ(FREQUENCY);
   ELECHOUSE_cc1101.SetRx();
   mySwitch.enableReceive(RX_PIN);
-
+  
   setup_wifi();
   client.setServer(MQTT_HOST, MQTT_PORT);
   client.setCallback(callback);
