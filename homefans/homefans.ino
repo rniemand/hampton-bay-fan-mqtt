@@ -1,12 +1,5 @@
 #include "homefans.h"
 
-/*
- * Modifications       : General code cleanup & seperation
- *                     : Modified to work with Home Decorations #1001 415 438 fans
- *
- * Known issues        : Somewhat spotty state tracking when codes are sent too quickly
-*/
-
 void setup_wifi() {
   delay(10);
 
