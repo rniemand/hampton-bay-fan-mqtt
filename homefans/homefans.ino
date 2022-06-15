@@ -10,19 +10,19 @@
 void setup_wifi() {
   delay(10);
 
-  // connect to WiFi
+  // Connect to WiFi
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(WIFI_SSID);
   WiFi.begin(WIFI_SSID, WIFI_PASS);
-
+  
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-
+  
   randomSeed(micros());
-
+  
   Serial.println("");
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
@@ -35,15 +35,15 @@ void transmitState(int fanId, char* attr, char* payload) {
   mySwitch.enableTransmit(TX_PIN);        // Transmit on
   mySwitch.setRepeatTransmit(RF_REPEATS); // set RF code repeat
   mySwitch.setProtocol(RF_PROTOCOL);      // send Received Protocol
-  // mySwitch.setPulseLength(320); // ! see if we need this
+  // mySwitch.setPulseLength(320);        // modify this if required
   
-  int rxCommand = generateCommand(fanId, attr, payload);
-  mySwitch.send(rxCommand, 24);    // Send the 24 bit code
+  // Generate and send the RF payload to the fan
+  mySwitch.send(generateCommand(fanId, attr, payload), 24);
   
-  ELECHOUSE_cc1101.SetRx();        // set Receive on
-  mySwitch.disableTransmit();      // set Transmit off
-  mySwitch.enableReceive(RX_PIN);  // Receiver on
-
+  ELECHOUSE_cc1101.SetRx();               // set Receive on
+  mySwitch.disableTransmit();             // set Transmit off
+  mySwitch.enableReceive(RX_PIN);         // Receiver on
+  
   postStateUpdate(fanId);
 }
 
