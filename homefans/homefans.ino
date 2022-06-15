@@ -202,7 +202,7 @@ void setup() {
   }
   
   ELECHOUSE_cc1101.Init();
-  ELECHOUSE_cc1101.setMHZ(FREQUENCY);
+  ELECHOUSE_cc1101.setMHZ(RF_FREQUENCY);
   ELECHOUSE_cc1101.SetRx();
   mySwitch.enableReceive(RX_PIN);
   
