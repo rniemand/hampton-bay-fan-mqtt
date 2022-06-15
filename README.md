@@ -1,6 +1,8 @@
 # Hampton Bay Fan MQTT
 > **Note**: This project is a copy of [Ben Owen](https://github.com/owenb321) original [hampton-bay-fan-mqtt](https://github.com/rniemand/hampton-bay-fan-mqtt) repo modified to work for my fans - most of the credit should go to him!
 
+You can find out more about this project in **[my blog post](https://www.richardn.ca/posts/CeilingFanRemoteHacking/)**.
+
 ## Overview
 ESP8266 project enabling MQTT control for a Hampton Bay fan with a wireless receiver. Wireless communication is performed with a **CC1101** wireless transceiver operating at `~303 MHz`.
 
