@@ -67,7 +67,19 @@ void callback(char* topic, byte* payload, unsigned int length) {
     attr = strtok(topic+sizeof(BASE_TOPIC) + 5, "/");
     action = strtok(NULL, "/");
     // Convert payload to lowercase
-    for(int i=0; payloadChar[i]; i++) { payloadChar[i] = tolower(payloadChar[i]); }
+    for(int i=0; payloadChar[i]; i++) {
+      payloadChar[i] = tolower(payloadChar[i]);
+    }
+
+    #if MQTT_LOG_MESSAGES
+      Serial.print("  > attr: ");
+      Serial.print(attr);
+      Serial.print(" | action: ");
+      Serial.print(action);
+      Serial.print(" | payload: ");
+      Serial.print(payloadChar);
+      Serial.println();
+    #endif
 
     // Sync tracked fan states based on the incomming MQTT message
     if(strcmp(attr, "on") == 0) { // Fan Power State (On/Off)
