@@ -22,6 +22,16 @@ This project uses the following libraries that are available through the `Arduin
 Modify the appropriate configuration in `./homefans/config.h` to work with your WiFi \ MQTT settings.
 
 Change the `WIFI_*` and `MQTT_*` definitions in the sketch to match your network settings before uploading to the ESP.
+
+### Frequency
+You may need to alter the value of `FREQUENCY` (in `config.h`) if you are struggling to get your fan to respond. It took a lot of trial and error, but I finally got mine working using a value of `303.875` MHz.
+
+From what I can find online - these are known good frequencies:
+
+- `303.875` - working for me
+- `303.631` - original frequency used
+- `303.000` - in some cases this works?
+
 ### MQTT
 By default, the state/command topics will be
 * Fan on/off (payload `on` or `off`)
