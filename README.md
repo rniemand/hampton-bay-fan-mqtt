@@ -71,9 +71,16 @@ mqtt:
       optimistic: false
 ```
 
+Once restarted your new entities should be listed in Home Assistant:
+
 ![](/images/01.png)
-_Loaded entities_
+
+The fan controls operate as you would expect:
 
 ![](/images/02.png)
 
+Same for the light:
+
 ![](/images/03.png)
+
+> **Note**: You will need to repeat this for each new fan.
