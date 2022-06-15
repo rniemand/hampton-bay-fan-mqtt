@@ -159,30 +159,42 @@ int generateCommand(int fanId, char* attr, char* payload) {
   int commandInt  = 0b01110000;
   int command     = 0b0000;
 
-  if(strcmp(attr, "speed") == 0) {
-    if(strcmp(payload, "low") == 0) { command = 0b0110; }
-    else if(strcmp(payload, "medium") == 0) { command = 0b0101; }
-    else if(strcmp(payload, "high") == 0) { command = 0b0100; }
-    else if(strcmp(payload, "off") == 0) { command = 0b0111; }
-  }
-  else if(strcmp(attr, "light") == 0) {
-    if(strcmp(payload, "on") == 0) { command = 0b0010; }
-    else if(strcmp(payload, "off") == 0) { command = 0b0001; }
-  }
-  else {
+  if(strcmp(attr, "speed") == 0) { // Handle "Fan Speed" commands
+    if(strcmp(payload, "low") == 0) {
+      command = 0b0110;
+    } else if(strcmp(payload, "medium") == 0) {
+      command = 0b0101;
+    } else if(strcmp(payload, "high") == 0) {
+      command = 0b0100;
+    } else if(strcmp(payload, "off") == 0) {
+      command = 0b0111;
+    }
+  } else if(strcmp(attr, "light") == 0) { // Handle "Fan Light" commands
+    if(strcmp(payload, "on") == 0) {
+      command = 0b0010;
+    } else if(strcmp(payload, "off") == 0) {
+      command = 0b0001;
+    }
+  } else if(strcmp(attr, "on") == 0) { // Handle "Fan Power" commands
+    if(strcmp(payload, "on") == 0) {
+      command = 0b1110;
+    } else if(strcmp(payload, "off") == 0) {
+      command = 0b0111;
+    }
+  } else { // Handle all other commands (i.e. unknown commands)
     Serial.print("Unsupported command: (attr: ");
     Serial.print(attr);
     Serial.print(") ");
     Serial.println(payload);
   }
 
+  // Combine all values together to create our final command
   int finalCommand = baseCommand + fanIdDips + commandInt + command;
-
-#if LOG_OUTGOING_COMMANDS
-  Serial.print("(INFO) Generated Command: ");
-  Serial.println(finalCommand);
-#endif
-
+  #if LOG_OUTGOING_COMMANDS
+    Serial.print("(INFO) Generated Command: ");
+    Serial.println(finalCommand);
+  #endif
+  
   return finalCommand;
 }
 
