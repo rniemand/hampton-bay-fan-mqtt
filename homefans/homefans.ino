@@ -48,20 +48,20 @@ void transmitState(int fanId, char* attr, char* payload) {
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
-#if MQTT_LOG_MESSAGES
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
-  }
-  Serial.println();
-#endif
-
+  #if MQTT_LOG_MESSAGES
+    Serial.print("Message arrived [");
+    Serial.print(topic);
+    Serial.print("] ");
+    for (int i = 0; i < length; i++) {
+      Serial.print((char)payload[i]);
+    }
+    Serial.println();
+  #endif
+  
   char payloadChar[length + 1];
   sprintf(payloadChar, "%s", payload);
   payloadChar[length] = '\0';
-
+  
   // Get ID after the base topic + a slash
   char id[5];
   memcpy(id, &topic[sizeof(BASE_TOPIC)], 4);
@@ -75,20 +75,32 @@ void callback(char* topic, byte* payload, unsigned int length) {
     action = strtok(NULL, "/");
     // Convert payload to lowercase
     for(int i=0; payloadChar[i]; i++) { payloadChar[i] = tolower(payloadChar[i]); }
+
+    // Sync tracked fan states based on the incomming MQTT message
+    if(strcmp(attr, "on") == 0) { // Fan Running State (On/Off)
+      if(strcmp(payloadChar, "on") == 0) {
+        fans[idint].fanState = true;
+      } else if(strcmp(payloadChar, "off") == 0) {
+        fans[idint].fanState = false;
+      }
+    } else if(strcmp(attr, "speed") == 0) { // Fan Speed (low, med, high, off)
+      if(strcmp(payloadChar, "low") == 0) {
+        fans[idint].fanSpeed = FAN_LOW;
+      } else if(strcmp(payloadChar, "medium") == 0) {
+        fans[idint].fanSpeed = FAN_MED;
+      } else if(strcmp(payloadChar, "high") == 0) {
+        fans[idint].fanSpeed = FAN_HI;
+      } else if(strcmp(payloadChar, "off") == 0) {
+        fans[idint].fanSpeed = 0;
+      }
+    } else if(strcmp(attr, "light") == 0) { // Fan Light State (On/Off)
+      if(strcmp(payloadChar, "on") == 0) {
+        fans[idint].lightState = true;
+      } else if(strcmp(payloadChar, "off") == 0) {
+        fans[idint].lightState = false;
+      }
+    }
     
-    if(strcmp(attr, "on") == 0) {
-      if(strcmp(payloadChar, "on") == 0) { fans[idint].lightState = true; }
-      else if(strcmp(payloadChar, "off") == 0) { fans[idint].lightState = false; }
-    }
-    else if(strcmp(attr, "speed") == 0) {
-      if(strcmp(payloadChar, "low") == 0) { fans[idint].fanSpeed = FAN_LOW; }
-      else if(strcmp(payloadChar, "medium") == 0) { fans[idint].fanSpeed = FAN_MED; }
-      else if(strcmp(payloadChar, "high") == 0) { fans[idint].fanSpeed = FAN_HI; }
-    }
-    else if(strcmp(attr, "light") == 0) {
-      if(strcmp(payloadChar, "on") == 0) { fans[idint].lightState = true; }
-      else if(strcmp(payloadChar, "off") == 0) { fans[idint].lightState = false; }
-    }
     if(strcmp(action, "set") == 0) {
       transmitState(idint, attr, payloadChar);
     }
