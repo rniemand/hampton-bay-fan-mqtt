@@ -70,3 +70,9 @@ mqtt:
       payload_off: "off"
       optimistic: false
 ```
+
+![](/images/01.png)
+
+![](/images/02.png)
+
+![](/images/03.png)
