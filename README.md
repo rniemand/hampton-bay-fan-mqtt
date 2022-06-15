@@ -45,24 +45,28 @@ By default, the state/command topics will be
 ### Home Assistant
 To use this in Home Assistant as an MQTT Fan and MQTT Light, I'm using this config
 ```yaml
-fan:
-  - name: "Master Bedroom Fan"
-    state_topic: "home/fans/0001/light/state"
-    command_topic: "home/fans/0001/light/set"
-    preset_mode_state_topic: "home/fans/0001/speed/state"
-    preset_mode_command_topic: "home/fans/0001/speed/set"
-    preset_modes:
-      - "off"
-      - "low"
-      - "medium"
-      - "high"
-    qos: 0
-    payload_on: "on"
-    payload_off: "off"
+mqtt:
+  fan:
+    - name: "Master Bedroom Fan"
+      state_topic: "home/fans/0001/light/state"
+      command_topic: "home/fans/0001/light/set"
+      preset_mode_state_topic: "home/fans/0001/speed/state"
+      preset_mode_command_topic: "home/fans/0001/speed/set"
+      preset_modes:
+        - "off"
+        - "low"
+        - "medium"
+        - "high"
+      qos: 0
+      payload_on: "on"
+      payload_off: "off"
 
-light:
-- platform: mqtt
-  name: "Bedroom Fan Light"
-  state_topic: "home/hamptonbay/1000/light/state"
-  command_topic: "home/hamptonbay/1000/light/set"
+  light:
+    - name: "Master Bedroom Fan Light"
+      state_topic: "home/fans/0001/light/state"
+      command_topic: "home/fans/0001/light/set"
+      qos: 0
+      payload_on: "on"
+      payload_off: "off"
+      optimistic: false
 ```
