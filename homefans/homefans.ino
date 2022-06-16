@@ -89,12 +89,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
     for(int i=0; payloadChar[i]; i++) {
       payloadChar[i] = tolower(payloadChar[i]);
     }
-
-    #if LOG_TO_MQTT
-      char logMessage[512];
-      sprintf(logMessage, "(DEBUG) processing message [%s] (%d) %s", topic, id, payloadChar);
-      mqttLog(logMessage);
-    #endif
     
     // Sync tracked fan states based on the incomming MQTT message
     if(strcmp(attr, "on") == 0) { // Fan Power State (On/Off)
@@ -133,12 +127,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
     // Invalid ID
     return;
   }
-}
-
-void mqttLog(char* message) {
-  char outTopic[100];
-  sprintf(outTopic, "%s/log", BASE_TOPIC);
-  client.publish(outTopic, message);
 }
 
 void postStateUpdate(int id) {
@@ -194,10 +182,6 @@ void reconnect() {
       client.subscribe(SUBSCRIBE_TOPIC_SPEED_STATE);
       client.subscribe(SUBSCRIBE_TOPIC_LIGHT_SET);
       client.subscribe(SUBSCRIBE_TOPIC_LIGHT_STATE);
-
-      #if LOG_TO_MQTT
-        mqttLog("(DEBUG) Online");
-      #endif
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -281,12 +265,6 @@ void loop() {
     int subtractedValue = value - 0b111111000110000000000000; // zero out the common "1111  1100  0110" from the command
     int truncatedValue  = subtractedValue >> 8;               // shift out the subtracted values (4 bits remaining)
     int id              = truncatedValue ^0b1111;             // invert "truncatedValue" to get remote ID (0-15)
-
-    #if LOG_TO_MQTT
-      char logMessage[512];
-      sprintf(logMessage, "(DEBUG) RF IN (p: %s) (b: %s) %s", prot, bits, value);
-      mqttLog(logMessage);
-    #endif
     
     // Ensure that the protocol and bit-length are what we expect to see
     if( prot == 11 && bits == 24 ) {
