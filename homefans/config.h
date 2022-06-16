@@ -15,6 +15,7 @@
 // MQTT Topics
 // ===================================================================
 #define STATUS_TOPIC BASE_TOPIC "/status"
+#define LOGGING_TOPIC BASE_TOPIC "/logs"
 #define SUBSCRIBE_TOPIC_ON_SET BASE_TOPIC "/+/on/set"
 #define SUBSCRIBE_TOPIC_ON_STATE BASE_TOPIC "/+/on/state"
 #define SUBSCRIBE_TOPIC_SPEED_SET BASE_TOPIC "/+/speed/set"
