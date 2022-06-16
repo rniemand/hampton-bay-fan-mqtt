@@ -129,6 +129,34 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
 }
 
+void mqttLog(int id, char* message) {
+  char outTopic[100];
+  sprintf(outTopic, "%s/%s/log", BASE_TOPIC, idStrings[id]);
+  client.publish(outTopic, message);
+  
+  #if MQTT_LOG_MESSAGES
+    Serial.print("(MQTT) OUT [");
+    Serial.print(outTopic);
+    Serial.print("] ");
+    Serial.print(message);
+    Serial.println();
+  #endif
+}
+
+void mqttLog(char* message) {
+  char outTopic[100];
+  sprintf(outTopic, "%s/log", BASE_TOPIC);
+  client.publish(outTopic, message);
+  
+  #if MQTT_LOG_MESSAGES
+    Serial.print("(MQTT) OUT [");
+    Serial.print(outTopic);
+    Serial.print("] ");
+    Serial.print(message);
+    Serial.println();
+  #endif
+}
+
 void postStateUpdate(int id) {
   char outTopic[100];
   
@@ -182,6 +210,10 @@ void reconnect() {
       client.subscribe(SUBSCRIBE_TOPIC_SPEED_STATE);
       client.subscribe(SUBSCRIBE_TOPIC_LIGHT_SET);
       client.subscribe(SUBSCRIBE_TOPIC_LIGHT_STATE);
+
+      #if LOG_TO_MQTT
+        mqttLog("(DEBUG) Online");
+      #endif
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -271,6 +303,12 @@ void loop() {
     int truncatedValue  = subtractedValue >> 8;               // shift out the subtracted values (4 bits remaining)
     int id              = truncatedValue ^0b1111;             // invert "truncatedValue" to get remote ID (0-15)
 
+    #if LOG_TO_MQTT
+      char logMessage[512];
+      sprintf(logMessage, "(DEBUG) RF IN (p: %s) (b: %s) %s", prot, bits, value);
+      mqttLog(logMessage);
+    #endif
+    
     // Ensure that the protocol and bit-length are what we expect to see
     if( prot == 11 && bits == 24 ) {
       // Remove the first and last 4 bits to get the "cmdMode" which is either:
