@@ -38,3 +38,4 @@
 // ===================================================================
 #define MQTT_LOG_MESSAGES false
 #define LOG_OUTGOING_COMMANDS false
+#define LOG_TO_MQTT false
