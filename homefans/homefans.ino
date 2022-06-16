@@ -60,7 +60,7 @@ void transmitState(int fanId, char* attr, char* payload) {
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  #if MQTT_LOG_MESSAGES
+  #if DEBUG_MODE
     Serial.print("(MQTT) IN [");
     Serial.print(topic);
     Serial.print("] ");
@@ -89,6 +89,12 @@ void callback(char* topic, byte* payload, unsigned int length) {
     for(int i=0; payloadChar[i]; i++) {
       payloadChar[i] = tolower(payloadChar[i]);
     }
+
+    #if LOG_TO_MQTT
+      char logMessage[512];
+      sprintf(logMessage, "(DEBUG) processing message [%s] (%d) %s", topic, id, payloadChar);
+      mqttLog(logMessage);
+    #endif
     
     // Sync tracked fan states based on the incomming MQTT message
     if(strcmp(attr, "on") == 0) { // Fan Power State (On/Off)
@@ -129,32 +135,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
 }
 
-void mqttLog(int id, char* message) {
-  char outTopic[100];
-  sprintf(outTopic, "%s/%s/log", BASE_TOPIC, idStrings[id]);
-  client.publish(outTopic, message);
-  
-  #if MQTT_LOG_MESSAGES
-    Serial.print("(MQTT) OUT [");
-    Serial.print(outTopic);
-    Serial.print("] ");
-    Serial.print(message);
-    Serial.println();
-  #endif
-}
-
 void mqttLog(char* message) {
   char outTopic[100];
   sprintf(outTopic, "%s/log", BASE_TOPIC);
   client.publish(outTopic, message);
-  
-  #if MQTT_LOG_MESSAGES
-    Serial.print("(MQTT) OUT [");
-    Serial.print(outTopic);
-    Serial.print("] ");
-    Serial.print(message);
-    Serial.println();
-  #endif
 }
 
 void postStateUpdate(int id) {
@@ -163,7 +147,7 @@ void postStateUpdate(int id) {
   // Publish "Fan Power" state
   sprintf(outTopic, "%s/%s/on/state", BASE_TOPIC, idStrings[id]);
   client.publish(outTopic, fans[id].fanState ? "on":"off", true);
-  #if MQTT_LOG_MESSAGES
+  #if DEBUG_MODE
     Serial.print("(MQTT) OUT [");
     Serial.print(outTopic);
     Serial.print("] ");
@@ -174,7 +158,7 @@ void postStateUpdate(int id) {
   // Publish "Fan Speed" state
   sprintf(outTopic, "%s/%s/speed/state", BASE_TOPIC, idStrings[id]);
   client.publish(outTopic, fanStateTable[fans[id].fanSpeed], true);
-  #if MQTT_LOG_MESSAGES
+  #if DEBUG_MODE
     Serial.print("(MQTT) OUT [");
     Serial.print(outTopic);
     Serial.print("] ");
@@ -185,7 +169,7 @@ void postStateUpdate(int id) {
   // Publish "Fan Light" state
   sprintf(outTopic, "%s/%s/light/state", BASE_TOPIC, idStrings[id]);
   client.publish(outTopic, fans[id].lightState ? "on":"off", true);
-  #if MQTT_LOG_MESSAGES
+  #if DEBUG_MODE
     Serial.print("(MQTT) OUT [");
     Serial.print(outTopic);
     Serial.print("] ");
@@ -261,11 +245,6 @@ int generateCommand(int fanId, char* attr, char* payload) {
 
   // Combine all values together to create our final command
   int finalCommand = baseCommand + fanIdDips + commandInt + command;
-  #if LOG_OUTGOING_COMMANDS
-    Serial.print("(INFO) Generated Command: ");
-    Serial.println(finalCommand);
-  #endif
-  
   return finalCommand;
 }
 
