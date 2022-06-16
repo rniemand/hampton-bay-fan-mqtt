@@ -100,10 +100,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
     } else if(strcmp(attr, "speed") == 0) { // Fan Speed (low, med, high, off)
       if(strcmp(payloadChar, "low") == 0) {
         fans[idint].fanSpeed = FAN_LOW;
+        fans[idint].fanState = true;
       } else if(strcmp(payloadChar, "medium") == 0) {
         fans[idint].fanSpeed = FAN_MED;
+        fans[idint].fanState = true;
       } else if(strcmp(payloadChar, "high") == 0) {
         fans[idint].fanSpeed = FAN_HI;
+        fans[idint].fanState = true;
       } else if(strcmp(payloadChar, "off") == 0) {
         fans[idint].fanSpeed = 0;
         fans[idint].fanState = false;
