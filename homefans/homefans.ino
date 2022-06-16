@@ -28,7 +28,7 @@ void transmitState(int fanId, char* attr, char* payload) {
   mySwitch.enableTransmit(TX_PIN);        // Transmit on
   mySwitch.setRepeatTransmit(RF_REPEATS); // set RF code repeat
   mySwitch.setProtocol(RF_PROTOCOL);      // send Received Protocol
-  // mySwitch.setPulseLength(320);        // modify this if required
+  mySwitch.setPulseLength(320);           // modify this if required
   
   // Generate and send the RF payload to the fan
   int rfCommand = generateCommand(fanId, attr, payload);
