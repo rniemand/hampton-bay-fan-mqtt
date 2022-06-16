@@ -34,7 +34,7 @@ void transmitState(int fanId, char* attr, char* payload) {
   int rfCommand = generateCommand(fanId, attr, payload);
   mySwitch.send(rfCommand, 24);
   
-  #if LOG_OUTGOING_COMMANDS
+  #if DEBUG_MODE
     Serial.print("(RF) OUT [protocol: ");
     Serial.print(RF_PROTOCOL);
     Serial.print("] [repeats: ");
