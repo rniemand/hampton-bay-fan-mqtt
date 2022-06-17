@@ -1,5 +1,7 @@
 #include "homefans.h"
 
+#define LOGGING_TOPIC BASE_TOPIC "/log"
+
 void setup_wifi() {
   delay(10);
 
@@ -168,6 +170,18 @@ void postStateUpdate(int id) {
   #endif
 }
 
+void mqttLog(char* message) {
+  char outTopic[100];
+  sprintf(outTopic, "%s/log", BASE_TOPIC);
+  client.publish(outTopic, message, true);
+}
+
+void mqttLog(String message) {
+  char charBuf[256];
+  message.toCharArray(charBuf, 256);
+  client.publish(LOGGING_TOPIC, charBuf);
+}
+
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
@@ -184,6 +198,7 @@ void reconnect() {
       client.subscribe(SUBSCRIBE_TOPIC_SPEED_STATE);
       client.subscribe(SUBSCRIBE_TOPIC_LIGHT_SET);
       client.subscribe(SUBSCRIBE_TOPIC_LIGHT_STATE);
+      mqttLog("Connected");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -260,6 +275,7 @@ void setup() {
     }
 
     // NOTE: if updating FS this would be the place to unmount FS using FS.end()
+    mqttLog("Start updating " + type);
     Serial.println("Start updating " + type);
   });
   
@@ -294,10 +310,13 @@ void setup() {
 }
 
 void loop() {
+  // Allow for OTA updating
   ArduinoOTA.handle();
   
   // Ensure that the MQTT client is connected
-  if (!client.connected()) { reconnect(); }
+  if (!client.connected()) {
+    reconnect();
+  }
   client.loop();
   
   // Handle received rf-transmissions
