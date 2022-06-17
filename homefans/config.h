@@ -14,6 +14,7 @@
 // ===================================================================
 // MQTT Topics
 // ===================================================================
+#define LOGGING_TOPIC BASE_TOPIC "/log"
 #define STATUS_TOPIC BASE_TOPIC "/status"
 #define LOGGING_TOPIC BASE_TOPIC "/logs"
 #define SUBSCRIBE_TOPIC_ON_SET BASE_TOPIC "/+/on/set"
@@ -37,4 +38,4 @@
 // ===================================================================
 // Optional configuration
 // ===================================================================
-#define DEBUG_MODE true
+#define DEBUG_MODE false
