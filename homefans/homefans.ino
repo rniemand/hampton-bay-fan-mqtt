@@ -77,6 +77,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   char payloadChar[length + 1];
   sprintf(payloadChar, "%s", payload);
   payloadChar[length] = '\0';
+  mqttLog("(MQTT) IN [" + String(topic) + "] " + String(payloadChar));
   
   // Get ID after the base topic + a slash
   char id[5];
@@ -171,9 +172,7 @@ void postStateUpdate(int id) {
 }
 
 void mqttLog(char* message) {
-  char outTopic[100];
-  sprintf(outTopic, "%s/log", BASE_TOPIC);
-  client.publish(outTopic, message, true);
+  client.publish(LOGGING_TOPIC, message, true);
 }
 
 void mqttLog(String message) {
@@ -266,6 +265,7 @@ void setup() {
   
   setup_wifi();
 
+  // https://github.com/esp8266/Arduino/blob/master/libraries/ArduinoOTA/ArduinoOTA.h
   ArduinoOTA.onStart([]() {
     String type;
     if (ArduinoOTA.getCommand() == U_FLASH) {
@@ -273,9 +273,6 @@ void setup() {
     } else { // U_FS
       type = "filesystem";
     }
-
-    // NOTE: if updating FS this would be the place to unmount FS using FS.end()
-    mqttLog("Start updating " + type);
     Serial.println("Start updating " + type);
   });
   
