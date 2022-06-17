@@ -96,3 +96,17 @@ Same for the light:
 ![](/images/03.png)
 
 > **Note**: You will need to repeat this for each new fan.
+
+## Development
+### Setup
+- Download [Arduino IDE](https://www.arduino.cc/en/software) - if needed
+- Add additional boards - `http://arduino.esp8266.com/stable/package_esp8266com_index.json`
+- In **Boards Manager** search for and install `esp8266`
+- Clone this repo and open `./homefans/homefans.ino`
+- Install required libs
+  - `SmartRC-CC1101-Driver-Lib` via manager
+  - `rc-switch` - via manager
+  - `PubSubClient` - via manager OR zip
+- Ensure that your board is selected (i.e. `D1 Mini`)
+- Run a test compilation to see if everything builds
+
