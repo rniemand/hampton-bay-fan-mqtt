@@ -37,6 +37,7 @@ void transmitState(int fanId, char* attr, char* payload) {
   // Generate and send the RF payload to the fan
   int rfCommand = generateCommand(fanId, attr, payload);
   mySwitch.send(rfCommand, 24);
+  mqttLog("(RF) OUT [" + String(fanId) + "] " + String(attr) + " = " + String(payload) + " (" + String(rfCommand) + ")");
   
   #if DEBUG_MODE
     Serial.print("(RF) OUT [protocol: ");
@@ -77,7 +78,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
   char payloadChar[length + 1];
   sprintf(payloadChar, "%s", payload);
   payloadChar[length] = '\0';
-  mqttLog("(MQTT) IN [" + String(topic) + "] " + String(payloadChar));
   
   // Get ID after the base topic + a slash
   char id[5];
