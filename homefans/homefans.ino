@@ -169,10 +169,6 @@ void postStateUpdate(int id) {
   #endif
 }
 
-void mqttLog(char* message) {
-  client.publish(LOGGING_TOPIC, message, true);
-}
-
 void mqttLog(String message) {
   char charBuf[256];
   message.toCharArray(charBuf, 256);
