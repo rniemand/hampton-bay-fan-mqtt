@@ -1,7 +1,5 @@
 #include "homefans.h"
 
-#define LOGGING_TOPIC BASE_TOPIC "/log"
-
 void setup_wifi() {
   delay(10);
 
