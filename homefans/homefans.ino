@@ -25,12 +25,12 @@ void setup_wifi() {
 }
 
 void transmitState(int fanId, char* attr, char* payload) {
-  ELECHOUSE_cc1101.SetTx();               // set Transmit on
-  mySwitch.disableReceive();              // Receiver off
-  mySwitch.enableTransmit(TX_PIN);        // Transmit on
-  mySwitch.setRepeatTransmit(RF_REPEATS); // set RF code repeat
-  mySwitch.setProtocol(RF_PROTOCOL);      // send Received Protocol
-  mySwitch.setPulseLength(320);           // modify this if required
+  ELECHOUSE_cc1101.SetTx();                 // set Transmit on
+  mySwitch.disableReceive();                // Receiver off
+  mySwitch.enableTransmit(TX_PIN);          // Transmit on
+  mySwitch.setRepeatTransmit(RF_REPEATS);   // set RF code repeat
+  mySwitch.setProtocol(RF_PROTOCOL);        // send Received Protocol
+  mySwitch.setPulseLength(RF_PULSE_LENGTH); // modify this if required
   
   // Generate and send the RF payload to the fan
   int rfCommand = generateCommand(fanId, attr, payload);

@@ -30,9 +30,10 @@
 // ===================================================================
 // 303.631 - (original) determined from FAN-9T remote tramsmissions
 // 303.875 - (personal) this seems to work for my fans
-#define RF_FREQUENCY 303.875
-#define RF_PROTOCOL  11
-#define RF_REPEATS   8
+#define RF_FREQUENCY    303.875
+#define RF_PROTOCOL     11
+#define RF_REPEATS      8
+#define RF_PULSE_LENGTH 320
 
 
 // ===================================================================
