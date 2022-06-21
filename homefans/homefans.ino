@@ -35,7 +35,6 @@ void transmitState(int fanId, char* attr, char* payload) {
   // Generate and send the RF payload to the fan
   int rfCommand = generateCommand(fanId, attr, payload);
   mySwitch.send(rfCommand, 24);
-  mqttLog("(RF) OUT [" + String(fanId) + "] " + String(attr) + " = " + String(payload) + " (" + String(rfCommand) + ")");
   
   #if DEBUG_MODE
     Serial.print("(RF) OUT [protocol: ");
@@ -169,12 +168,6 @@ void postStateUpdate(int id) {
   #endif
 }
 
-void mqttLog(String message) {
-  char charBuf[256];
-  message.toCharArray(charBuf, 256);
-  client.publish(LOGGING_TOPIC, charBuf);
-}
-
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
@@ -191,7 +184,6 @@ void reconnect() {
       client.subscribe(SUBSCRIBE_TOPIC_SPEED_STATE);
       client.subscribe(SUBSCRIBE_TOPIC_LIGHT_SET);
       client.subscribe(SUBSCRIBE_TOPIC_LIGHT_STATE);
-      mqttLog("Connected");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
