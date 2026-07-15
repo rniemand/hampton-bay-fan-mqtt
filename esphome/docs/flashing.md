@@ -49,6 +49,6 @@ Instead of running `esphome run` from a terminal, you can start a local web UI w
 ```
 esphome dashboard .
 ```
-(run from the `esphome/` folder) which gives you the same compile/upload/log actions plus a browser-based YAML editor. If you'd rather manage this from inside Home Assistant, see the ESPHome Device Builder add-on section in [home-assistant-integration.md](home-assistant-integration.md).
+(run from the `esphome/` folder) which gives you the same compile/upload/log actions plus a browser-based YAML editor. If you'd rather manage this from inside Home Assistant itself, see [device-builder-addon.md](device-builder-addon.md) for provisioning through the ESPHome Device Builder add-on instead.
 
 **Next:** [home-assistant-integration.md](home-assistant-integration.md) to bring the flashed device into Home Assistant.

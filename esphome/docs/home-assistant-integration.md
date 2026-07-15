@@ -30,6 +30,4 @@ If you're migrating a fan that was previously controlled by the original `homefa
 
 ## Optional: manage this device from inside Home Assistant
 
-If your Home Assistant runs as Home Assistant OS or Supervised, you can install the **ESPHome Device Builder** add-on (**Settings > Add-ons > Add-on Store**, search "ESPHome"). It hosts the same ESPHome Dashboard used in [flashing.md](flashing.md), but inside Home Assistant's UI.
-
-To manage this project from it, copy `hampton-bay-fans.yaml` and the `components/` folder into the add-on's config directory (typically `/config/esphome/` — reachable via the Samba/File Editor add-ons, or SSH) so the dashboard can see them, then use its built-in compile/install buttons instead of the local CLI from [compilation.md](compilation.md)/[flashing.md](flashing.md).
+If your Home Assistant runs as Home Assistant OS or Supervised, you can install the **ESPHome Device Builder** add-on (**Settings > Add-ons > Add-on Store**, search "ESPHome") and provision, flash, and update this device entirely from a web UI hosted inside Home Assistant, instead of the local CLI from [compilation.md](compilation.md)/[flashing.md](flashing.md). Full walkthrough: [device-builder-addon.md](device-builder-addon.md).

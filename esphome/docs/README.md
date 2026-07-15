@@ -29,6 +29,10 @@ esphome run hampton-bay-fans.yaml
 Pick the USB/COM port when prompted the first time; ESPHome finds the device over mDNS on
 every run after that. Full steps: [flashing.md](flashing.md).
 
+> **Alternative to steps 1-2:** if your Home Assistant runs as OS or Supervised, you can skip
+> the local CLI entirely and build/flash from a web UI hosted inside Home Assistant instead —
+> see [device-builder-addon.md](device-builder-addon.md).
+
 ## 3. Add it to Home Assistant
 
 No MQTT setup required — this firmware uses ESPHome's native API, which Home Assistant
