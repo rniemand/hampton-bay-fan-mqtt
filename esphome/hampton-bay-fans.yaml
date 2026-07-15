@@ -1,0 +1,86 @@
+# ESPHome replacement for homefans/homefans.ino.
+#
+# Fill in the placeholder values below before running `esphome run` for the first
+# time (same convention as homefans/config.h - do not commit real secrets here).
+#
+# Wiring (matches homefans/homefans.h):
+#   CC1101 GDO0 (RX) -> D2
+#   CC1101 GDO2 (TX) -> D1
+#   CC1101 SPI (SCK/MISO/MOSI/CSN) -> hardware SPI defaults used by
+#     SmartRC-CC1101-Driver-Lib on ESP8266 (D5/D6/D7/D8) - confirm against your
+#     physical wiring during bring-up.
+#
+# Home Assistant integration is via ESPHome's native API (no MQTT) - fan/light
+# entities below are auto-discovered once this device is added in HA.
+
+substitutions:
+  name: hampton-bay-fans
+  friendly_name: Hampton Bay Fans
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+
+esp8266:
+  board: d1_mini
+
+wifi:
+  ssid: "ENTER_WIFI_SSID"
+  password: "ENTER_WIFI_SSID_PASS"
+  # Fallback hotspot in case the wifi connection fails.
+  ap:
+    ssid: "${friendly_name} Fallback"
+    password: "ENTER_FALLBACK_AP_PASSWORD"
+
+captive_portal:
+
+logger:
+
+api:
+  encryption:
+    # Freshly generated - safe to leave as-is, or regenerate with:
+    #   python3 -c "import secrets, base64; print(base64.b64encode(secrets.token_bytes(32)).decode())"
+    key: "+rqiCs2G3GkfqAcikuVFfKMwsnSBSqosAqOQEbOsVJ0="
+
+ota:
+  - platform: esphome
+    password: "ENTER_OTA_PASSWORD"
+
+external_components:
+  - source:
+      type: local
+      path: components
+
+cc1101_fan:
+  id: fan_hub
+  rx_pin: D2
+  tx_pin: D1
+  # 303.631 - (original) determined from FAN-9T remote transmissions
+  # 303.875 - (personal) this seems to work for my fans
+  frequency: 303.875
+  protocol: 11
+  repeats: 8
+  pulse_length: 320
+
+# One fan/light pair per physical fan, keyed by the fan's 4-bit DIP switch id
+# (up = 1, down = 0). Add/remove entries below to match the fans you actually
+# have paired to this board.
+fan:
+  - platform: cc1101_fan
+    name: "Living Room Fan"
+    cc1101_fan_id: fan_hub
+    fan_id: 0
+  - platform: cc1101_fan
+    name: "Bedroom Fan"
+    cc1101_fan_id: fan_hub
+    fan_id: 1
+
+light:
+  - platform: cc1101_fan
+    name: "Living Room Fan Light"
+    cc1101_fan_id: fan_hub
+    fan_id: 0
+  - platform: cc1101_fan
+    name: "Bedroom Fan Light"
+    cc1101_fan_id: fan_hub
+    fan_id: 1
